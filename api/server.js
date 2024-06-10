@@ -6,7 +6,7 @@ server.use(express.json())
 
 server.use(logger)
 
-server.use('/api/users', usersRouter)
+server.use('/api/users', usersRouter);
 // remember express by default cannot parse JSON in request bodies
 
 // global middlewares and the user's router need to be connected here
