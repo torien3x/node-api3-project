@@ -53,22 +53,31 @@ router.put('/:id', validateUserId, validateUser,(req, res) => {
 
 router.delete('/:id', validateUserId, async (req, res) => {
   try {
-    const result = await User.remove(req.params.id)
-    res.json(result)
+    await User.remove(req.params.id)
+    res.json(req.user)
   } catch (err) {
     next(err)
   }
 });
 
-router.get('/:id/posts', validateUserId, (req, res) => {
-  // RETURN THE ARRAY OF USER POSTS
-  // this needs a middleware to verify user id
+router.get('/:id/posts', validateUserId, async (req, res) => {
+ try {
+  const results = await User.getUserPosts(req.params.id)
+  res.json(results)
+ } catch (err) {
+  next (err)
+ }
 });
 
-router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
-  // RETURN THE NEWLY CREATED USER POST
-  // this needs a middleware to verify user id
-  // and another middleware to check that the request body is valid
+router.post('/:id/posts', validateUserId, validatePost, async (req, res) => {
+  try {
+    const results = await Post.insert({
+      user_id: req.params.id,
+      text: req.text,
+    })
+  } catch (err) {
+    next (err)
+  }
 });
 
 router.use(err, req, res, next =>  {
@@ -81,4 +90,4 @@ router.use(err, req, res, next =>  {
 
 
 // do not forget to export the router
-module.exports = server
+module.exports = router
