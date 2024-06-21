@@ -2,9 +2,6 @@ const User = require('../users/users-model')
 
 function logger(req, res, next) {
   // DO YOUR MAGIC
-  const timestamp = new Date().toLocaleString()
-  const method = req.method
-  const url = req.originalUrl
   console.log('[${timestamp}] ${method} to ${url}')
   next()
 }
@@ -13,7 +10,7 @@ function logger(req, res, next) {
   try {
     const user = await User.getById(req.params.id)
     if (!user) {
-     next({ status: 404, message: 'user not found'})
+     res.status(404).json({message: 'User not found'})
     } else {
       req.user = user
       next()
@@ -27,6 +24,7 @@ function logger(req, res, next) {
 
 function validateUser(req, res, next) {
   // DO YOUR MAGIC
+  console.log(console.log('here'))
   const { name } = req.body
   if (!name || !name.trim()) {
     res.status(400).json({
@@ -40,14 +38,14 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
   // DO YOUR MAGIC
-  const { text } = req.body
+  const { text } = req.body;
   if (!text || !text.trim()) {
     res.status(400).json({
-      message: "missing rrquired text field",
-    })
+      message: "missing required text field",
+    });
   } else {
-    req.text = text.trim()
-    next()
+    req.text = text.trim();
+    next();
   }
 }
 

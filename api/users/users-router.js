@@ -4,7 +4,6 @@ const {
   validateUser,
   validatePost,
 } = require('../middleware/middleware');
-const server = require('../server');
 
 // You will need `users-model.js` and `posts-model.js` both
 // The middleware functions also need to be required
@@ -14,12 +13,12 @@ const Post = require('../posts/posts-model')
 
 const router = express.Router();
 
-router.get('/', validateUserId, (req, res) => {
+router.get('/', (req, res) => {
   User.get()
     .then(users => {
       res.json(users)
     })
-    .catch(next)
+    .catch(err => console.log(err))
 });
 
 router.get('/:id', validateUserId, (req, res) => {
@@ -32,7 +31,7 @@ router.post('/', validateUser, (req, res) => {
       res.status(201).json(newUser)
   })
   .catch(err => {
-    next(err)
+    console.log(err)
   })
 });
 
@@ -44,7 +43,7 @@ router.put('/:id', validateUserId, validateUser,(req, res) => {
     .then(user => {
       res.json(user)
     })
-    .catch(next)
+    .catch(err => console.log(err))
 });
 
 router.delete('/:id', validateUserId, async (req, res) => {
@@ -52,7 +51,7 @@ router.delete('/:id', validateUserId, async (req, res) => {
     await User.remove(req.params.id)
     res.json(req.user)
   } catch (err) {
-    next(err)
+console.log(err)
   }
 });
 
@@ -61,7 +60,7 @@ router.get('/:id/posts', validateUserId, async (req, res) => {
   const results = await User.getUserPosts(req.params.id)
   res.json(results)
  } catch (err) {
-  next (err)
+console.log(err)
  }
 });
 
@@ -71,19 +70,12 @@ router.post('/:id/posts', validateUserId, validatePost, async (req, res) => {
       user_id: req.params.id,
       text: req.text,
     })
+    res.json(results)
   } catch (err) {
-    next (err)
+console.log(err)
   }
 });
 
-router.use(err, req, res, next =>  {
-  res.status(err.status || 500).json({
-    customMessage: 'something tragic inside posts router happened',
-    message: err.message,
-    stack: err.status,
-  })
-}
-
 
 // do not forget to export the router
-module.exports = router
+module.exports = router;
